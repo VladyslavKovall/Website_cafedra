@@ -27,8 +27,7 @@
 <div class="description">
         <p>Кафедра є випускною за спеціальностями F2 «Інженерія програмного забезпечення» та F3 «Комп’ютерні науки» (денна та заочна форми навчання, освітні ступені «Бакалавр», «Магістр»).
           Кафедра налічує 12 викладачів, серед них – 1 доктор наук, 8 кандидатів наук, 2 старших викладача, 1 викладач.</p>
-</div>
-
+</div> 
         <div class="links">
             <ul>
                 <li><a href="https://drive.google.com/file/d/1tN9gdLR_fwHVOYl7VIVP9bo-tgo1oNjH/view?usp=sharing">Положення про кафедру</a></li>
@@ -83,6 +82,87 @@
         </div>
       </div>
     </div>
+<script>
+  // Функція обходу DOM з callback
+  function traverseDOM(node, callback) {
+    callback(node,() => {
+        const next = getNextNode(node);
+        if (next) {
+          traverseDOM(next, callback);
+        }
+      },
+      () => {
+        const prev = getPreviousNode(node);
+        if (prev) {
+          traverseDOM(prev, callback);
+        }
+      }
+    );
+  }
 
+  // Отримує наступний вузол у дереві
+  function getNextNode(node) {
+    if (node.firstElementChild) {
+      return node.firstElementChild;
+    }
+    while (node) {
+      if (node.nextElementSibling) {
+        return node.nextElementSibling;
+      }
+      node = node.parentElement;
+    }
+    return null;
+  }
+
+  // Отримує попередній вузол у дереві
+  function getPreviousNode(node) {
+    if (node.previousElementSibling) {
+      node = node.previousElementSibling;
+      while (node.lastElementChild) {
+        node = node.lastElementChild;
+      }
+      return node;
+    }
+    return node.parentElement;
+  }
+
+  // Callback-функція взаємодії з користувачем
+  function userInteractionCallback(node, next, back) {
+    const content = node.textContent.trim() || "Порожній вузол";
+    let message = `Вміст вузла: ${content}\n`;
+
+    const hasNext = getNextNode(node) !== null;
+    const hasPrev = getPreviousNode(node) !== null;
+
+    if (hasNext && hasPrev) {
+      message += "Перейти далі? (OK) / Назад? (Скасувати)";
+      if (confirm(message)) {
+        next();
+      } else {
+        back();
+      }
+    } else if (hasNext) {
+      message += "Перейти далі? (OK) / Вийти? (Скасувати)";
+      if (confirm(message)) {
+        next();
+      }
+    } else if (hasPrev) {
+      message += "Назад? (OK) / Вийти? (Скасувати)";
+      if (confirm(message)) {
+        back();
+      }
+    } else {
+      alert("Це останній вузол. Завершення.");
+    }
+  }
+
+  // Запускаємо після завантаження сторінки
+  window.addEventListener("DOMContentLoaded", () => {
+    const startNode = document.body;
+    traverseDOM(startNode, userInteractionCallback);
+  });
+</script>
+
+    
 </body>
 </html>
